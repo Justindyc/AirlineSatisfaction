@@ -1,0 +1,121 @@
+CREATE TABLE TravelFeedback (
+    ID INT PRIMARY KEY,
+    Gender VARCHAR(10),
+    Age INT,
+    CustomerType VARCHAR(20),
+    TypeOfTravel VARCHAR(20),
+    Class VARCHAR(20),
+    FlightDistance INT,
+    DepartureDelay INT,
+    ArrivalDelay INT,
+    DepartureArrivalTimeConvenience INT,
+    EaseOfOnlineBooking INT,
+    CheckinService INT,
+    OnlineBoarding INT,
+    GateLocation INT,
+    OnboardService INT,
+    SeatComfort INT,
+    LegRoomService INT,
+    Cleanliness INT,
+    FoodAndDrink INT,
+    InflightService INT,
+    InflightWifiService INT,
+    InflightEntertainment INT,
+    BaggageHandling INT,
+    OverallRating DECIMAL(5, 2),
+    Satisfaction VARCHAR(25)
+);
+
+SELECT * 
+FROM travelfeedback;
+
+-- Get an overview of OverallRating
+
+SELECT 
+	MIN(OverallRating) AS MinRating,
+	MAX(OverallRating) AS MaxRating,
+	AVG(OverallRating) AS AvgRating
+FROM travelfeedback;
+
+-- Get an overview of different ratings
+
+SELECT 
+    AVG(DepartureArrivalTimeConvenience) AS AvgDepartureArrivalTimeConvenience,
+    AVG(EaseOfOnlineBooking) AS AvgEaseOfOnlineBooking,
+    AVG(CheckinService) AS AvgCheckinService,
+    AVG(OnlineBoarding) AS AvgOnlineBoarding,
+    AVG(GateLocation) AS AvgGateLocation,
+    AVG(OnboardService) AS AvgOnboardService,
+    AVG(SeatComfort) AS AvgSeatComfort,
+    AVG(LegRoomService) AS AvgLegRoomService,
+    AVG(Cleanliness) AS AvgCleanliness,
+    AVG(FoodAndDrink) AS AvgFoodAndDrink,
+    AVG(InflightService) AS AvgInflightService,
+    AVG(InflightWifiService) AS AvgInflightWifiService,
+    AVG(InflightEntertainment) AS AvgInflightEntertainment,
+    AVG(BaggageHandling) AS AvgBaggageHandling
+FROM 
+    travelfeedback;
+    
+-- Check how delays affect Satisfaction
+
+SELECT 
+	CASE
+		WHEN DepartureDelay > 0 THEN 'Departure Delay'
+		WHEN ArrivalDelay > 0 THEN 'Arrival Delay'
+		ELSE 'On Time'
+	END AS Delays,
+	COUNT(CASE WHEN Satisfaction = 'Satisfied' THEN 1 END) AS SatisfiedCount,
+   COUNT(CASE WHEN Satisfaction = 'Neutral or Dissatisfied' THEN 1 END) AS DissatisfiedCount
+FROM 
+	travelfeedback
+GROUP BY 
+	Delays
+ORDER BY
+	Delays
+	    
+-- Check how different ages rate
+
+SELECT
+	CASE
+		WHEN Age < 18 THEN 'Child'
+		WHEN Age BETWEEN 18 AND 30 THEN 'Young Adult'
+		WHEN Age BETWEEN 30 AND 45 THEN 'Adult'
+		WHEN Age BETWEEN 45 AND 60 THEN 'Middle Age'
+		ELSE 'Senior'
+	END AS Age_Bracket,
+	COUNT(CASE WHEN Satisfaction = 'Satisfied' THEN 1 END) AS SatisfiedCount,
+   COUNT(CASE WHEN Satisfaction = 'Neutral or Dissatisfied' THEN 1 END) AS DissatisfiedCount
+FROM travelfeedback
+GROUP BY Age_Bracket 
+ORDER BY
+   CASE Age_Bracket
+      WHEN 'Child' THEN 1
+      WHEN 'Young Adult' THEN 2
+      WHEN 'Adult' THEN 3
+      WHEN 'Middle Age' THEN 4
+      ELSE 5
+   END;
+
+-- Check how different flight distances affect ratings
+
+SELECT
+	CASE
+		WHEN FlightDistance < 500 THEN 'Under 500'
+		WHEN FlightDistance BETWEEN 500 AND 1000 THEN '500-1000'
+		WHEN FlightDistance BETWEEN 1000 AND 2000 THEN '1000-2000'
+		WHEN FlightDistance BETWEEN 2000 AND 3000 THEN '2000-3000'
+		ELSE '3000+'
+	END AS Distance_Bracket,
+	COUNT(CASE WHEN Satisfaction = 'Satisfied' THEN 1 END) AS SatisfiedCount,
+   COUNT(CASE WHEN Satisfaction = 'Neutral or Dissatisfied' THEN 1 END) AS DissatisfiedCount
+FROM travelfeedback
+GROUP BY Distance_Bracket
+ORDER BY 
+	CASE Distance_Bracket
+		WHEN 'Under 500' THEN 1
+		WHEN '500-1000' THEN 2
+		WHEN '1000-2000' THEN 3
+		WHEN '2000-3000' THEN 4
+		ELSE 5
+	END;
